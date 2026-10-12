@@ -37,10 +37,10 @@ Open a Go **module folder** (the one containing `go.mod`) as the workspace, put 
 
 1. In the new window open `src/checkout.service.ts` and click inside `processCheckout`.
 2. Run **Code Flow: Explore from Here** (right-click menu or Command Palette). The first statement is highlighted and the *Code Flow Explorer* sidebar opens.
-3. **Next** (`Cmd/Ctrl+Alt+J`) to move on. On `const total = calculateTotal(...)` press **Step Into** (`Cmd/Ctrl+Alt+L`): `pricing.ts` opens. **Step Out** (`Cmd/Ctrl+Alt+H`) returns to the call site.
+3. **Next** (`F10`) to move on. On `const total = calculateTotal(...)` press **Step Into** (`F11`): `pricing.ts` opens. **Step Out** (`Shift+F11`) returns to the call site.
 4. Step into `applyDiscount` and press **Next** on its `if`: a Quick Pick asks which path to explore.
 5. Reach `console.error(...)` or `gateway.charge(...)` and try Step Into: you get a clear message that it cannot be explored (library / interface) instead of a guess.
-6. **Previous** (`Cmd/Ctrl+Alt+K`) undoes the last action exactly, including Step Into/Out and branch choices.
+6. **Previous** (`Alt+F10`) undoes the last action exactly, including Step Into/Out and branch choices.
 
 ## Commands
 
@@ -54,7 +54,19 @@ Open a Go **module folder** (the one containing `go.mod`) as the workspace, put 
 | Explain Current Step (AI) | Requests an explanation (see below). |
 | Select AI Provider · Configure API Key · Remove API Key · Select AI Model · Test AI Connection · Enable/Disable AI Explanations | AI configuration. |
 
-Navigation commands are also in the editor title bar and context menu while a flow is active. Default keybindings (only active during an exploration, remappable): `Ctrl/Cmd+Alt+J` next, `K` previous, `L` step into, `H` step out.
+Navigation commands are also in the editor title bar and context menu while a flow is active.
+
+**Keyboard** (only active during an exploration, and never while a real debug session is running; remappable):
+
+| Key | Action | Also |
+| --- | --- | --- |
+| `F10` | Next | `Ctrl/Cmd+Alt+J` |
+| `F11` | Step Into | `Ctrl/Cmd+Alt+L` |
+| `Shift+F11` | Step Out | `Ctrl/Cmd+Alt+H` |
+| `Alt+F10` | Previous | `Ctrl/Cmd+Alt+K` |
+| `Shift+F5` | Stop | |
+
+There is no `F9` equivalent (there are no breakpoints) and no `F5` "continue". During an exploration `F11` replaces the full-screen toggle. On a Mac, function keys may need `Fn` unless you enabled "Use F1, F2, etc. keys as standard function keys".
 
 The highlighted statement uses the theme colors `codeFlow.currentStepBackground`, `codeFlow.currentStepBorder` and (for call sites waiting on the stack) `codeFlow.callerBackground`.
 
@@ -93,7 +105,7 @@ npm run test:vscode  # smoke tests inside a real VS Code extension host (needs V
 - `npm test` covers step extraction (TypeScript and Go), symbol/cross-file resolution, Next/Previous, Step Into/Out, branch choice, recursion, unresolved symbols, missing/disabled AI, and the real OpenAI/Anthropic provider packages against a stubbed `fetch`. AI responses are mocked.
 - `npm run test:vscode` launches the locally installed VS Code with a throw-away profile and drives the real commands: a TypeScript suite on `examples/checkout-demo`, and a Go suite on `examples/go-demo` with the installed Go extension (skipped if it is not installed). Set `VSCODE_EXECUTABLE` to test another build, e.g. `/Applications/Cursor.app/Contents/MacOS/Cursor`.
 
-See `docs/ARCHITECTURE.md` in the repository for the design.
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the design.
 
 ## Known limitations
 

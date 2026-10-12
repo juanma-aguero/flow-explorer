@@ -8,7 +8,7 @@ const tests: Suite = [
   ['activates and registers every command', async () => {
     const manifest = require(path.resolve(__dirname, '..', '..', '..', 'package.json')) as { contributes: { commands: Array<{ command: string }> } };
     await open(demoFile('checkout.service.ts'), 'validateCart(cart);');
-    const ext = vscode.extensions.getExtension('local.code-flow-explorer');
+    const ext = vscode.extensions.getExtension('juanma-aguero.code-flow-explorer');
     assert.ok(ext, 'extension is installed in the host');
     await ext.activate();
     const registered = new Set(await vscode.commands.getCommands(true));
@@ -56,6 +56,16 @@ const tests: Suite = [
     await exec('workbench.action.acceptSelectedQuickOpenItem'); // first option: the if branch
     await pending2;
     await expectAt(pricing, 'return applyBulkDiscount(total);');
+    await exec('codeFlow.stop');
+  }],
+
+  ['choosing a path from the sidebar needs no Quick Pick', async () => {
+    const pricing = demoFile('pricing.ts');
+    await open(pricing, 'if (customer.isPremium)');
+    await exec('codeFlow.exploreFromHere');
+    await expectAt(pricing, 'if (customer.isPremium)');
+    await vscode.commands.executeCommand('codeFlow.chooseBranch', 'else'); // what clicking "else-if branch" sends
+    await expectAt(pricing, 'else if (total > 100)');
     await exec('codeFlow.stop');
   }],
 

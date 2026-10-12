@@ -102,6 +102,34 @@ describe('FlowEngine: conditional branches', () => {
   });
 });
 
+describe('FlowEngine: choices made directly in the panel', () => {
+  it('follows a branch given by id without opening a Quick Pick', async () => {
+    const { engine, chooser } = await engineFor(fixture('shapes.ts'), 'function branching');
+    const result = await engine.next('else');
+    assert.equal(result.moved, true);
+    assert.equal(await label(engine), 'work(2);');
+    assert.equal(chooser.asked.length, 0, 'the user already chose by clicking');
+    assert.equal(engine.session!.choiceAt((await engine.snapshot())!.step.id.replace(/s\d+$/, 's0')), 'else');
+  });
+
+  it('falls back to asking when the branch id is unknown', async () => {
+    const { engine, chooser } = await engineFor(fixture('shapes.ts'), 'function branching', { branches: ['then'] });
+    await engine.next('nope');
+    assert.equal(chooser.asked.length, 1);
+    assert.equal(await label(engine), 'work(1);');
+  });
+
+  it('steps into the call identified by id, skipping the call picker', async () => {
+    const { engine, chooser } = await engineFor(fixture('unresolved.ts'), 'function multi');
+    const calls = (await engine.snapshot())!.step.calls;
+    assert.deepEqual(calls.map((c) => c.text), ['local', 'other']);
+    const result = await engine.stepInto({ id: calls[1].id });
+    assert.equal(result.moved, true);
+    assert.equal((await engine.snapshot())!.functionName, 'other');
+    assert.equal(chooser.asked.length, 0);
+  });
+});
+
 describe('FlowEngine: Step Into / Step Out', () => {
   const unresolved = fixture('unresolved.ts');
 
@@ -163,9 +191,9 @@ describe('FlowEngine: Step Into / Step Out', () => {
     assert.equal((await engine.snapshot())!.callStack.length, 1);
 
     await engine.next();
-    assert.deepEqual((await engine.snapshot())!.step.calls, [
-      { text: 'JSON.stringify', canStepInto: false, note: (await engine.snapshot())!.step.calls[0].note },
-    ]);
+    const calls = (await engine.snapshot())!.step.calls;
+    assert.deepEqual(calls.map((c) => [c.text, c.canStepInto]), [['JSON.stringify', false]]);
+    assert.ok(calls[0].id && calls[0].note, 'each call carries an id and the reason it cannot be entered');
     result = await engine.stepInto();
     assert.match(result.message!, /library or declaration file/);
     assert.equal((await engine.snapshot())!.message, result.message, 'message is surfaced to the panel');

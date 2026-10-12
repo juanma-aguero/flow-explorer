@@ -68,6 +68,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     register('codeFlow.exploreFromHere', () => controller.start('enclosing')),
     register('codeFlow.exploreFunction', () => controller.start('symbol')),
     register('codeFlow.next', () => controller.run(() => engine.next())),
+    // Used by the sidebar (clicking a path or a call); not contributed to the Command Palette.
+    vscode.commands.registerCommand('codeFlow.chooseBranch', (id: unknown) => typeof id === 'string' && controller.run(() => engine.next(id))),
+    vscode.commands.registerCommand('codeFlow.stepIntoCall', (id: unknown) => typeof id === 'string' && controller.run(() => engine.stepInto({ id }))),
     register('codeFlow.previous', () => controller.run(() => engine.previous())),
     register('codeFlow.stepInto', () => controller.run(() => engine.stepInto())),
     register('codeFlow.stepOut', () => controller.run(() => engine.stepOut())),

@@ -3,8 +3,16 @@
   "displayName": "Code Flow Explorer",
   "description": "Step through the logical flow of TypeScript, JavaScript and Go code without running it, with optional AI explanations.",
   "version": "0.1.0",
-  "publisher": "local",
+  "publisher": "juanma-aguero",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/juanma-aguero/flow-explorer.git"
+  },
+  "homepage": "https://github.com/juanma-aguero/flow-explorer#readme",
+  "bugs": {
+    "url": "https://github.com/juanma-aguero/flow-explorer/issues"
+  },
   "private": true,
   "engines": {
     "vscode": "^1.90.0",
@@ -22,6 +30,7 @@
     "explain"
   ],
   "main": "./dist/extension.js",
+  "icon": "media/icon.png",
   "activationEvents": [
     "onLanguage:typescript",
     "onLanguage:javascript",
@@ -226,6 +235,31 @@
         "key": "ctrl+alt+h",
         "mac": "cmd+alt+h",
         "when": "codeFlow.active"
+      },
+      {
+        "command": "codeFlow.next",
+        "key": "f10",
+        "when": "codeFlow.active && !inDebugMode"
+      },
+      {
+        "command": "codeFlow.stepInto",
+        "key": "f11",
+        "when": "codeFlow.active && !inDebugMode"
+      },
+      {
+        "command": "codeFlow.stepOut",
+        "key": "shift+f11",
+        "when": "codeFlow.active && !inDebugMode"
+      },
+      {
+        "command": "codeFlow.previous",
+        "key": "alt+f10",
+        "when": "codeFlow.active && !inDebugMode"
+      },
+      {
+        "command": "codeFlow.stop",
+        "key": "shift+f5",
+        "when": "codeFlow.active && !inDebugMode"
       }
     ],
     "viewsContainers": {
@@ -327,7 +361,8 @@
     "test:vscode": "npm run build && npm run compile:tests && node out/test/vscode/runTests.js",
     "test": "npm run compile:tests && node --test \"out/test/**/*.test.js\"",
     "vscode:prepublish": "npm run typecheck && node esbuild.mjs --production",
-    "package": "npx --yes @vscode/vsce package --no-dependencies --allow-missing-repository"
+    "publish:ovsx": "npm run package && npx --yes ovsx publish code-flow-explorer-$npm_package_version.vsix",
+    "package": "npx --yes @vscode/vsce package --no-dependencies"
   },
   "devDependencies": {
     "@types/node": "^22.20.5",

@@ -147,7 +147,7 @@ export interface FlowSnapshot {
     label: string;
     awaits: boolean;
     range: SourceRange;
-    calls: Array<{ text: string; canStepInto: boolean; note?: string }>;
+    calls: Array<{ id: string; text: string; canStepInto: boolean; note?: string }>;
     branches: Array<{ id: string; label: string }>;
   };
   /** Outermost frame first. */

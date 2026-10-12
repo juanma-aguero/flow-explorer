@@ -105,15 +105,15 @@ export class FlowEngine {
 
   // -- navigation ------------------------------------------------------------
 
-  next(): Promise<NavigationResult> {
-    return this.act((s) => this.navigator.next(s));
+  next(branchId?: string): Promise<NavigationResult> {
+    return this.act((s) => this.navigator.next(s, branchId));
   }
 
   previous(): Promise<NavigationResult> {
     return this.act((s) => this.navigator.previous(s));
   }
 
-  stepInto(call?: CallSite): Promise<NavigationResult> {
+  stepInto(call?: Pick<CallSite, 'id'>): Promise<NavigationResult> {
     return this.act((s) => this.navigator.stepInto(s, call));
   }
 
@@ -137,8 +137,8 @@ export class FlowEngine {
       step.calls.map(async (call) => {
         const resolution = await this.analyzer.resolveCall(call);
         return resolution.kind === 'resolved'
-          ? { text: call.text, canStepInto: true }
-          : { text: call.text, canStepInto: false, note: resolution.message };
+          ? { id: call.id, text: call.text, canStepInto: true }
+          : { id: call.id, text: call.text, canStepInto: false, note: resolution.message };
       }),
     );
 

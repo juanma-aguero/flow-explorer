@@ -36,12 +36,15 @@ export class FlowNavigator {
     return { flow, step };
   }
 
-  async next(session: FlowSession): Promise<NavigationResult> {
+  /** `branchId` picks the path directly (clicked in the sidebar); otherwise the user is asked. */
+  async next(session: FlowSession, branchId?: string): Promise<NavigationResult> {
     const { flow, step } = await this.currentStep(session);
     const targets = distinctTargets(step);
 
     if (step.branches.length > 1 && targets.length > 1) {
-      const choice = await this.chooser.chooseBranch(step, step.branches, session.choiceAt(step.id));
+      const choice =
+        step.branches.find((b) => b.id === branchId) ??
+        (await this.chooser.chooseBranch(step, step.branches, session.choiceAt(step.id)));
       if (!choice) return NOT_MOVED();
       session.recordBranch(step.id, choice.id);
       return this.goTo(session, choice.target, flow);
@@ -56,7 +59,7 @@ export class FlowNavigator {
     return { moved: true };
   }
 
-  async stepInto(session: FlowSession, only?: CallSite): Promise<NavigationResult> {
+  async stepInto(session: FlowSession, only?: Pick<CallSite, 'id'>): Promise<NavigationResult> {
     const { step } = await this.currentStep(session);
     if (step.calls.length === 0) return NOT_MOVED('This step contains no function call to step into.');
 
