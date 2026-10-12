@@ -1,0 +1,8 @@
+**
+!dist/extension.js
+!dist/typescript-lib/**
+!dist/wasm/**
+!media/**
+!README.md
+!package.json
+!LICENSE

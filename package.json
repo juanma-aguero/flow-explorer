@@ -1,0 +1,347 @@
+{
+  "name": "code-flow-explorer",
+  "displayName": "Code Flow Explorer",
+  "description": "Step through the logical flow of TypeScript, JavaScript and Go code without running it, with optional AI explanations.",
+  "version": "0.1.0",
+  "publisher": "local",
+  "license": "MIT",
+  "private": true,
+  "engines": {
+    "vscode": "^1.90.0",
+    "node": ">=20"
+  },
+  "categories": [
+    "Other",
+    "Education"
+  ],
+  "keywords": [
+    "code navigation",
+    "static analysis",
+    "ai",
+    "flow",
+    "explain"
+  ],
+  "main": "./dist/extension.js",
+  "activationEvents": [
+    "onLanguage:typescript",
+    "onLanguage:javascript",
+    "onLanguage:typescriptreact",
+    "onLanguage:javascriptreact",
+    "onLanguage:go"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "codeFlow.exploreFromHere",
+        "title": "Explore from Here",
+        "category": "Code Flow"
+      },
+      {
+        "command": "codeFlow.exploreFunction",
+        "title": "Explore Function",
+        "category": "Code Flow"
+      },
+      {
+        "command": "codeFlow.next",
+        "title": "Next Step",
+        "category": "Code Flow",
+        "icon": "$(debug-step-over)"
+      },
+      {
+        "command": "codeFlow.previous",
+        "title": "Previous Step",
+        "category": "Code Flow",
+        "icon": "$(debug-step-back)"
+      },
+      {
+        "command": "codeFlow.stepInto",
+        "title": "Step Into",
+        "category": "Code Flow",
+        "icon": "$(debug-step-into)"
+      },
+      {
+        "command": "codeFlow.stepOut",
+        "title": "Step Out",
+        "category": "Code Flow",
+        "icon": "$(debug-step-out)"
+      },
+      {
+        "command": "codeFlow.stop",
+        "title": "Stop Exploration",
+        "category": "Code Flow",
+        "icon": "$(debug-stop)"
+      },
+      {
+        "command": "codeFlow.explainStep",
+        "title": "Explain Current Step (AI)",
+        "category": "Code Flow"
+      },
+      {
+        "command": "codeFlow.selectProvider",
+        "title": "Select AI Provider",
+        "category": "Code Flow"
+      },
+      {
+        "command": "codeFlow.configureApiKey",
+        "title": "Configure API Key",
+        "category": "Code Flow"
+      },
+      {
+        "command": "codeFlow.clearApiKey",
+        "title": "Remove API Key",
+        "category": "Code Flow"
+      },
+      {
+        "command": "codeFlow.selectModel",
+        "title": "Select AI Model",
+        "category": "Code Flow"
+      },
+      {
+        "command": "codeFlow.testConnection",
+        "title": "Test AI Connection",
+        "category": "Code Flow"
+      },
+      {
+        "command": "codeFlow.toggleAi",
+        "title": "Enable/Disable AI Explanations",
+        "category": "Code Flow"
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "codeFlow.exploreFromHere",
+          "when": "editorLangId =~ /^((typescript|javascript)(react)?|go)$/"
+        },
+        {
+          "command": "codeFlow.exploreFunction",
+          "when": "editorLangId =~ /^((typescript|javascript)(react)?|go)$/"
+        },
+        {
+          "command": "codeFlow.next",
+          "when": "codeFlow.active"
+        },
+        {
+          "command": "codeFlow.previous",
+          "when": "codeFlow.active"
+        },
+        {
+          "command": "codeFlow.stepInto",
+          "when": "codeFlow.active"
+        },
+        {
+          "command": "codeFlow.stepOut",
+          "when": "codeFlow.active"
+        },
+        {
+          "command": "codeFlow.stop",
+          "when": "codeFlow.active"
+        },
+        {
+          "command": "codeFlow.explainStep",
+          "when": "codeFlow.active"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "codeFlow.exploreFromHere",
+          "when": "editorLangId =~ /^((typescript|javascript)(react)?|go)$/",
+          "group": "codeFlow@1"
+        },
+        {
+          "command": "codeFlow.exploreFunction",
+          "when": "editorLangId =~ /^((typescript|javascript)(react)?|go)$/",
+          "group": "codeFlow@2"
+        },
+        {
+          "command": "codeFlow.next",
+          "when": "codeFlow.active",
+          "group": "codeFlow@3"
+        },
+        {
+          "command": "codeFlow.stepInto",
+          "when": "codeFlow.active",
+          "group": "codeFlow@4"
+        },
+        {
+          "command": "codeFlow.stepOut",
+          "when": "codeFlow.active",
+          "group": "codeFlow@5"
+        },
+        {
+          "command": "codeFlow.stop",
+          "when": "codeFlow.active",
+          "group": "codeFlow@6"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "codeFlow.previous",
+          "when": "codeFlow.active",
+          "group": "navigation@1"
+        },
+        {
+          "command": "codeFlow.next",
+          "when": "codeFlow.active",
+          "group": "navigation@2"
+        },
+        {
+          "command": "codeFlow.stepInto",
+          "when": "codeFlow.active",
+          "group": "navigation@3"
+        },
+        {
+          "command": "codeFlow.stepOut",
+          "when": "codeFlow.active",
+          "group": "navigation@4"
+        },
+        {
+          "command": "codeFlow.stop",
+          "when": "codeFlow.active",
+          "group": "navigation@5"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "codeFlow.next",
+        "key": "ctrl+alt+j",
+        "mac": "cmd+alt+j",
+        "when": "codeFlow.active"
+      },
+      {
+        "command": "codeFlow.previous",
+        "key": "ctrl+alt+k",
+        "mac": "cmd+alt+k",
+        "when": "codeFlow.active"
+      },
+      {
+        "command": "codeFlow.stepInto",
+        "key": "ctrl+alt+l",
+        "mac": "cmd+alt+l",
+        "when": "codeFlow.active"
+      },
+      {
+        "command": "codeFlow.stepOut",
+        "key": "ctrl+alt+h",
+        "mac": "cmd+alt+h",
+        "when": "codeFlow.active"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "codeFlow",
+          "title": "Code Flow Explorer",
+          "icon": "media/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "codeFlow": [
+        {
+          "type": "webview",
+          "id": "codeFlow.sidebar",
+          "name": "Flow"
+        }
+      ]
+    },
+    "colors": [
+      {
+        "id": "codeFlow.currentStepBackground",
+        "description": "Background of the statement currently being explored.",
+        "defaults": {
+          "dark": "#ffd33d33",
+          "light": "#ffd33d66",
+          "highContrast": "#ffd33d66",
+          "highContrastLight": "#ffd33d66"
+        }
+      },
+      {
+        "id": "codeFlow.currentStepBorder",
+        "description": "Border of the statement currently being explored.",
+        "defaults": {
+          "dark": "#ffd33d",
+          "light": "#bf8700",
+          "highContrast": "#ffd33d",
+          "highContrastLight": "#bf8700"
+        }
+      },
+      {
+        "id": "codeFlow.callerBackground",
+        "description": "Background of the call sites of the functions waiting on the call stack.",
+        "defaults": {
+          "dark": "#58a6ff22",
+          "light": "#0969da22",
+          "highContrast": "#58a6ff33",
+          "highContrastLight": "#0969da33"
+        }
+      }
+    ],
+    "configuration": {
+      "title": "Code Flow Explorer",
+      "properties": {
+        "codeFlow.ai.enabled": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Allow AI explanations. When disabled, **no code is ever sent** to an AI provider. Navigation works either way."
+        },
+        "codeFlow.ai.provider": {
+          "type": "string",
+          "enum": [
+            "openai",
+            "anthropic"
+          ],
+          "default": "openai",
+          "description": "AI provider used to explain steps. API keys are stored in VS Code SecretStorage."
+        },
+        "codeFlow.ai.openaiModel": {
+          "type": "string",
+          "default": "gpt-5-mini",
+          "description": "Model ID used with the OpenAI provider."
+        },
+        "codeFlow.ai.anthropicModel": {
+          "type": "string",
+          "default": "claude-haiku-5-5",
+          "description": "Model ID used with the Anthropic provider."
+        },
+        "codeFlow.ai.autoExplain": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Request an explanation automatically on every step. **Off by default**: each explanation sends code to the AI provider."
+        },
+        "codeFlow.ai.maxContextChars": {
+          "type": "number",
+          "default": 6000,
+          "minimum": 500,
+          "description": "Maximum number of characters of source code sent with each explanation request."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "node esbuild.mjs",
+    "watch": "node esbuild.mjs --watch",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "compile:tests": "tsc -p tsconfig.json",
+    "test:vscode": "npm run build && npm run compile:tests && node out/test/vscode/runTests.js",
+    "test": "npm run compile:tests && node --test \"out/test/**/*.test.js\"",
+    "vscode:prepublish": "npm run typecheck && node esbuild.mjs --production",
+    "package": "npx --yes @vscode/vsce package --no-dependencies --allow-missing-repository"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.5",
+    "@types/vscode": "1.90.0",
+    "@vscode/test-electron": "^3.1.0",
+    "esbuild": "^0.28.2",
+    "tree-sitter-wasms": "^0.1.13",
+    "typescript": "~5.9.3"
+  },
+  "dependencies": {
+    "@ai-sdk/anthropic": "^2.0.109",
+    "@ai-sdk/openai": "^2.0.133",
+    "ai": "^5.0.273",
+    "web-tree-sitter": "^0.25.10",
+    "zod": "^3.25.76"
+  }
+}
