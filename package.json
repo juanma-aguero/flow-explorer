@@ -2,7 +2,7 @@
   "name": "code-flow-explorer",
   "displayName": "Code Flow Explorer",
   "description": "Step through the logical flow of TypeScript, JavaScript and Go code without running it, with optional AI explanations.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "publisher": "juanma-aguero",
   "license": "MIT",
   "repository": {
